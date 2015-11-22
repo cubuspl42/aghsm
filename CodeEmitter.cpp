@@ -87,12 +87,12 @@ std::vector<Word> CodeEmitter::emitCode() {
                 if(node.type == AstNode::DirectiveNode && node.sValue == ".CODE") {
                     _mainLabel = _words.size();
                     _currentSection = CodeSection;
-                } else if(node.type == AstNode::LabelNode) {
-                    _labels[node.sValue] = _words.size();
+                } else if(node.type == AstNode::ReferenceNode) {
+                    markReference(node.sValue);
                 } else if(node.type == AstNode::DirectiveNode && node.sValue == ".WORD") {
                     emitDataWords(node.children);
                 } else {
-                    emitterError("data section can contain only .WORD directives and labels");
+                    emitterError("data section can contain only .WORD directives and references");
                 }
                 break;
             }
@@ -139,7 +139,7 @@ void CodeEmitter::emitWord(Word word) {
 
 void CodeEmitter::emitDataWords(std::vector<AstNode> words) {
     Word word;
-    for(const AstNode &node : words) {
+    for(AstNode node : words) {
         if(node.type == AstNode::NumberNode) {
             word.data = node.aValue;
             emitWord(word);
@@ -201,7 +201,7 @@ void CodeEmitter::emitInstruction(AstNode node) {
 
     if(name == "null" || name == "halt") {
         emitWord(word);
-    } else if(name == "jump" || name == "jzero" || name == "jnzero" || name == "jpos") {
+    } else if(name[0] == 'j') {
         if(node.children.size() == 1 && node.children.front().type == AstNode::ReferenceNode) {
             markReference(node.children.front().sValue);
             word.instruction.adr = -1;
