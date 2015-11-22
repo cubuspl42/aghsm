@@ -87,8 +87,8 @@ std::vector<Word> CodeEmitter::emitCode() {
                 if(node.type == AstNode::DirectiveNode && node.sValue == ".CODE") {
                     _mainLabel = _words.size();
                     _currentSection = CodeSection;
-                } else if(node.type == AstNode::ReferenceNode) {
-                    markReference(node.sValue);
+                } else if(node.type == AstNode::LabelNode) {
+                    _labels[node.sValue] = _words.size();
                 } else if(node.type == AstNode::DirectiveNode && node.sValue == ".WORD") {
                     emitDataWords(node.children);
                 } else {
