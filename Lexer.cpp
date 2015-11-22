@@ -132,6 +132,8 @@ void Lexer::skipWhitespace() {
 }
 
 Token Lexer::readToken() {
+    skipWhitespace();
+
     Token token{Token::NullToken};
 
     int lineNo = _currentLineNo + 1;
