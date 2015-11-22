@@ -73,6 +73,8 @@ private:
 
     void emitInstruction(AstNode node);
 
+    void markDataReference(std::string);
+
     void markReference(std::string);
 
     void resolveReferences();
@@ -83,6 +85,7 @@ private:
     Section _currentSection = NullSection;
     std::unordered_map<std::string, int> _labels;
     int _mainLabel = 0;
+    std::vector<std::pair<std::string, int>> _dataReferences;
     std::vector<std::pair<std::string, int>> _references;
 };
 

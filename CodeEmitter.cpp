@@ -148,8 +148,12 @@ void CodeEmitter::emitDataWords(std::vector<AstNode> words) {
                 word.data = node.bValue;
                 emitWord(word);
             }
+        } else if(node.type == AstNode::ReferenceNode) {
+            markDataReference(node.sValue);
+            word.data = -2;
+            emitWord(word);
         } else {
-            emitterError("only numbers can follow .WORD directive");
+            emitterError("only numbers and references can follow .WORD directive");
         }
     }
 
@@ -243,6 +247,10 @@ void CodeEmitter::emitInstruction(AstNode node) {
 
 #endif
 
+void CodeEmitter::markDataReference(std::string reference) {
+    _dataReferences.push_back({reference, _words.size()});
+}
+
 void CodeEmitter::markReference(std::string reference) {
     //std::cout << "marking reference: " << reference << ' ' << _words.size() * 4 << std::endl;
     _references.push_back({reference, _words.size()});
@@ -251,6 +259,18 @@ void CodeEmitter::markReference(std::string reference) {
 #if 1
 
 void CodeEmitter::resolveReferences() {
+    for(auto p : _dataReferences) {
+        std::string dataReference = p.first;
+        int referenceWordIndex = p.second;
+        auto it = _labels.find(dataReference);
+        if(it == _labels.end()) {
+            emitterError("unresolved data reference");
+        } else {
+            int labelWordIndex = it->second;
+            _words[referenceWordIndex].data = labelWordIndex * 4;
+            //std::cout << "resolving data reference: " << reference << ' ' << referenceWordIndex * 4 << ' ' << labelWordIndex * 4 << std::endl;
+        }
+    }
     for(auto p : _references) {
         std::string reference = p.first;
         int referenceWordIndex = p.second;
