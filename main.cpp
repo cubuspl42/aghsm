@@ -5,21 +5,36 @@
 #include <fstream>
 
 int main(int argc, char **argv) {
-    std::ifstream ifs;
+	std::ifstream ifs;
 
-    if(argc == 2) {
-        ifs.open(argv[1]);
-    } else {
-        ifs.open("1.asm");
-    }
-    assert(ifs.good());
+	if (argc == 1) {
+		ifs.open("1.asm");
+		assert(ifs.good());
 
-    Assembler assembler(ifs);
-    auto program = assembler.compile();
+		Assembler assembler(ifs);
+		auto program = assembler.compile();
+		VM vm;
+		vm.load(program);
+		vm.run();
+	} else if (argc == 2) {
+		ifs.open(argv[1]);
+		
+		if (!ifs.good()) {
+			std::cerr << "Unable to open file" << std::endl;
+			return 1;
+		}
 
-    VM vm;
-    vm.load(program);
-    vm.run();
+		try {
+			Assembler assembler(ifs);
+			auto program = assembler.compile();
+			VM vm;
+			vm.load(program);
+			vm.run();
+		} catch (std::exception &e) {
+			std::cerr << e.what() << std::endl;
+			return 1;
+		}
+	}
 
     return 0;
 }
