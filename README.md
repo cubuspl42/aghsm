@@ -24,9 +24,36 @@ Install CMake.
 
 `./aghsm /path/to/source.txt`
 
-Program will be immedietaly assembled and executed.
+Program will be immedietaly assembled and executed
 
 ### Windows
 
-Instead of using `make`, you can generate a Visual Studio solution using CMake and build it.
+Visit [Releases](https://github.com/cubuspl42/aghsm/releases) page
+
+Download `aghsm.exe`
+
+Put it anywhere you like (for example "C:\aghsm\aghsm.exe")
+
+Put your source file in the same directory
+
+Launch cmd.exe
+
+`cd C:\aghsm\`
+
+`aghsm.exe sourcefile.txt`
+
+Program will be immedietaly assembled and executed
+
+## Extensions
+
+In order to allow users to see the output of their program, `print` instruction was added
+
+`print, @A` or
+
+`print, @B` or
+
+`print, (x)`
+
+
+
 
