@@ -12,40 +12,40 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 
+#include <iomanip>
+#include <string>
 #include "CodeEmitter.h"
 #include "Language.h"
 
 void printProgram(std::ostream &os, const std::vector<Word> &words) {
     const int numInstructions = sizeof(instructions) / sizeof(instructions[0]);
+
+    auto left = std::left;
+
     int i = 0;
     for(const Word &word : words) {
-        os << i * 4 << ": ";
+        os << left << std::setw(6) << std::to_string(i * 4) + ":";
         ++i;
 
         Instruction inst = word.instruction;
 
-        if(inst.code < numInstructions) {
-            os << instructions[inst.code] << ' ';
+        os << std::setw(6) << (inst.code < numInstructions ? instructions[inst.code] : "----");
 
-            if(inst.acu < 2) {
-                char acu = 'A' + (char)inst.acu;
-                os << "@" << acu << ' ';
-            }
+        os << std::setw(3) << (std::string{} + "@" + (inst.acu ? 'B' : 'A'));
 
-            std::string p0, p1;
-
-            if(inst.mod == 0) {
-                p0 = "{", p1 = "}";
-            } else if(inst.mod == 1) {
-                p0 = "(", p1 = ")";
-            } else {
-                p0 = "((", p1 = "))";
-            }
-
-            os << p0 << inst.adr << p1 << ' ';
+        std::string p0, p1;
+        if(inst.mod == 0) {
+            p0 = "", p1 = "";
+        } else if(inst.mod == 1) {
+            p0 = "(", p1 = ")";
+        } else {
+            p0 = "((", p1 = "))";
         }
 
-        os << "[" << word.data << "]";
+        os << std::setw(8) << p0 + std::to_string(inst.adr) + p1;
+
+        os << "[" << std::setw(10) << std::to_string(word.data) << "]";
+
         os << std::endl;
     }
 }
@@ -203,7 +203,7 @@ void CodeEmitter::emitInstruction(AstNode node) {
     word.data = 0;
     word.instruction.code = _opcodes[name];
 
-    if(name == "null" || name == "halt") {
+    if(name == "null" || name == "halt" || name == "dump") {
         emitWord(word);
     } else if(name[0] == 'j') {
         if(node.children.size() == 1 && node.children.front().type == AstNode::ReferenceNode) {

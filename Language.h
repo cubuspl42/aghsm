@@ -44,6 +44,7 @@ enum InstructionOpcode {
     MultInstruction,
     DivInstruction,
     PrintInstruction,
+    DumpInstruction,
 };
 
 constexpr const char * instructions[] = {
@@ -61,6 +62,7 @@ constexpr const char * instructions[] = {
         "mult",
         "div",
         "print",
+        "dump",
 };
 
 

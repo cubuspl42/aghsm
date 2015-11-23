@@ -42,7 +42,7 @@ void VM::run() {
 }
 
 void VM::print(std::ostream &os) {
-    os << " PC = " << PC << " A = " << A << " B = " << B << std::endl;
+    os << "< " << "@PC = " << PC << " @A = " << A << " @B = " << B << " >" << std::endl;
     printProgram(os, _program);
 }
 
@@ -145,6 +145,9 @@ void VM::executeNextInstruction() {
                 } else {
                     std::cout << AC << std::endl;
                 }
+                return;
+            case DumpInstruction:
+                this->print(std::cout);
                 return;
         }
     }
